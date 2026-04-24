@@ -30,13 +30,20 @@ public class UIManager : MonoBehaviour
 
     [Header("NPC Select UI")]
     public TextMeshProUGUI descriptionText;
+
     public Button npcButton1;
     public Button npcButton2;
     public Button npcButton3;
-    public Button returnButton;
+
     public TextMeshProUGUI npcButton1Text;
     public TextMeshProUGUI npcButton2Text;
     public TextMeshProUGUI npcButton3Text;
+
+    public TextMeshProUGUI npcButton1LabelText;
+    public TextMeshProUGUI npcButton2LabelText;
+    public TextMeshProUGUI npcButton3LabelText;
+
+    public Button returnButton;
     public TextMeshProUGUI returnButtonText;
 
     [Header("NPC Game Placeholder UI")]
@@ -47,8 +54,7 @@ public class UIManager : MonoBehaviour
 
     private int currentNpcId = 0;
 
-    // Здесь позже можно хранить прогресс каждого NPC отдельно.
-    // Например: NPC 1 находится на 5-й реплике, NPC 2 на 2-й и т.д.
+    // Здесь позже можно будет хранить прогресс каждого NPC отдельно.
     private Dictionary<int, int> npcProgress = new Dictionary<int, int>();
 
     private void Start()
@@ -110,12 +116,24 @@ public class UIManager : MonoBehaviour
         englishButtonText.text = "English";
 
         descriptionText.text = isLatvian
-            ? "Izvēlies vienu no trim tēliem. Katram tēlam būs atsevišķs dialogs un savs spēles progress."
-            : "Choose one of three characters. Each character will have a separate dialogue and its own game progress.";
+            ? "Tu esi ceļotājs teksta piedzīvojumu spēlē. Tu un nespēlējamais personāžs (NPC) atrodaties spēles pasaulē. Tavs mērķis ir nogalināt pūķi.\n\n" +
+              "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem, ievērojot šādus noteikumus:\n\n" +
+              "1. Uzdod līdzīgus un papildjautājumus tiem iepriekšējiem jautājumiem, uz kuriem atbilde bija \"jā\".\n" +
+              "2. Izvairies uzdot līdzīgus un papildjautājumus tiem iepriekšējiem jautājumiem, uz kuriem atbilde bija \"nē\".\n\n" +
+              "Zemāk ir pieejami trīs dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā."
+            : "You are a traveler in a text adventure game. You and the NPC are both in the game. Your goal is to kill the dragon.\n\n" +
+              "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions according to the following rules:\n\n" +
+              "1. Ask similar and follow-up questions to previous questions that have a \"yes\" answer.\n" +
+              "2. Avoid asking similar and follow-up questions to previous questions that have a \"no\" answer.\n\n" +
+              "Below are three different NPCs. You can choose any of them in any order.";
 
         npcButton1Text.text = "1";
         npcButton2Text.text = "2";
         npcButton3Text.text = "3";
+
+        npcButton1LabelText.text = GetNpcDisplayName(1);
+        npcButton2LabelText.text = GetNpcDisplayName(2);
+        npcButton3LabelText.text = GetNpcDisplayName(3);
 
         returnButtonText.text = isLatvian ? "Atpakaļ" : "Return";
 
@@ -163,21 +181,55 @@ public class UIManager : MonoBehaviour
 
         bool isLatvian = currentLanguage == GameLanguage.Latvian;
 
-        npcTitleText.text = "NPC " + currentNpcId;
+        string npcDisplayName = GetNpcDisplayName(currentNpcId);
 
         if (currentNpcId == 0)
         {
-            npcPlaceholderText.text = isLatvian
-                ? "Šeit vēlāk būs dialogs ar izvēlēto NPC."
-                : "The selected NPC dialogue will be added here later.";
-        }
-        else
-        {
-            int progress = npcProgress.ContainsKey(currentNpcId) ? npcProgress[currentNpcId] : 0;
+            npcTitleText.text = isLatvian
+                ? "Nespēlējamais personāžs"
+                : "NPC";
 
             npcPlaceholderText.text = isLatvian
-                ? $"Šeit vēlāk būs dialogs ar NPC {currentNpcId}.\n\nPašreizējais progress: {progress}"
-                : $"The dialogue with NPC {currentNpcId} will be added here later.\n\nCurrent progress: {progress}";
+                ? "Šeit vēlāk būs dialogs ar izvēlēto nespēlējamo personāžu."
+                : "The selected NPC dialogue will be added here later.";
+
+            return;
+        }
+
+        int progress = npcProgress.ContainsKey(currentNpcId) ? npcProgress[currentNpcId] : 0;
+
+        npcTitleText.text = npcDisplayName;
+
+        npcPlaceholderText.text = isLatvian
+            ? $"Šeit vēlāk būs dialogs ar šo tēlu.\n\nPašreizējais progress: {progress}"
+            : $"The dialogue with this character will be added here later.\n\nCurrent progress: {progress}";
+    }
+
+    private string GetNpcDisplayName(int npcId)
+    {
+        bool isLatvian = currentLanguage == GameLanguage.Latvian;
+
+        switch (npcId)
+        {
+            case 1:
+                return isLatvian
+                    ? "Mākslīgā intelekta nespēlējamais personāžs"
+                    : "AI NPC";
+
+            case 2:
+                return isLatvian
+                    ? "Nespēlējamais personāžs"
+                    : "NPC";
+
+            case 3:
+                return isLatvian
+                    ? "??? nespēlējamais personāžs"
+                    : "??? NPC";
+
+            default:
+                return isLatvian
+                    ? "Nespēlējamais personāžs"
+                    : "NPC";
         }
     }
 }
