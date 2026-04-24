@@ -3380,6 +3380,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1916946946}
   m_CullTransparentMesh: 1
+--- !u!1 &1976940804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1976940805}
+  - component: {fileID: 1976940806}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1976940805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976940804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 731.88306, y: 413.70987, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1976940806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976940804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c927cd66424130045aaede712e6b2881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  currentLanguage: 1
+  mainMenuPanel: {fileID: 666895421}
+  npcSelectPanel: {fileID: 1896198390}
+  npcGamePanel: {fileID: 923592351}
+  titleText: {fileID: 1570740011}
+  startButton: {fileID: 1916946948}
+  latvianButton: {fileID: 1231057423}
+  englishButton: {fileID: 1747372019}
+  startButtonText: {fileID: 1505356635}
+  latvianButtonText: {fileID: 913895397}
+  englishButtonText: {fileID: 415720950}
+  descriptionText: {fileID: 100491457}
+  npcButton1: {fileID: 1072116879}
+  npcButton2: {fileID: 572289950}
+  npcButton3: {fileID: 881958692}
+  returnButton: {fileID: 1555544666}
+  npcButton1Text: {fileID: 1762626415}
+  npcButton2Text: {fileID: 956000897}
+  npcButton3Text: {fileID: 1449201802}
+  returnButtonText: {fileID: 1277758293}
+  npcTitleText: {fileID: 415118731}
+  npcPlaceholderText: {fileID: 1877473516}
+  exitNpcButton: {fileID: 1914137057}
+  exitNpcButtonText: {fileID: 782064865}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3388,3 +3456,4 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 858178064}
   - {fileID: 541586057}
+  - {fileID: 1976940805}
