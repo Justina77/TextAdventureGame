@@ -20,60 +20,28 @@ if (!INWORLD_API_KEY || INWORLD_API_KEY === "PASTE_YOUR_INWORLD_KEY_HERE") {
 
 const conversations = new Map();
 
-const DUNGEON_NAME = "The Dragon's Dungeon";
-
-const ROOM_TEMPLATES = [
+const ROOMS = [
   {
+    id: "room1",
     name: "The Ashen Hall",
     description:
-      "a cold stone chamber with ash on the floor, weak torchlight on the walls, and the smell of old smoke in the air"
+      "a cold stone chamber with ash on the floor and weak torchlight on the walls"
   },
   {
+    id: "room2",
     name: "The Bone Passage",
     description:
-      "a narrow corridor filled with old bones, dust, and scratched marks on the stone walls"
+      "a narrow corridor filled with old bones, dust, and old marks on the stone walls"
   },
   {
+    id: "room3",
     name: "The Silent Gate",
     description:
-      "an ancient empty stone chamber with a black archway and heavy silence pressing from every side"
-  },
-  {
-    name: "The Moss-Covered Crypt",
-    description:
-      "a damp underground room where green moss covers broken stones and water drips from the ceiling"
-  },
-  {
-    name: "The Candle Vault",
-    description:
-      "a low vaulted chamber lit by dying candles, with wax covering the floor like pale scars"
-  },
-  {
-    name: "The Rusted Armory",
-    description:
-      "an old armory with rusted weapon racks, cracked shields, and the smell of iron in the air"
-  },
-  {
-    name: "The Whispering Corridor",
-    description:
-      "a long corridor where every step echoes, and faint whispers seem to move behind the walls"
-  },
-  {
-    name: "The Broken Shrine",
-    description:
-      "a ruined shrine with shattered statues, faded symbols, and cold air rising from the stones"
-  },
-  {
-    name: "The Flooded Chamber",
-    description:
-      "a half-flooded stone room where dark water covers the floor and reflects the torchlight"
-  },
-  {
-    name: "The Ember Room",
-    description:
-      "a warm chamber filled with dying embers, blackened stones, and traces of an old fire ritual"
+      "an ancient empty stone chamber with a dark entrance leading into the Dragon's Dungeon"
   }
 ];
+
+const DUNGEON_NAME = "The Dragon's Dungeon";
 
 const OBJECTS = [
   {
@@ -107,45 +75,7 @@ function pickRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-function shuffleArray(array) {
-  const copy = [...array];
-
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-
-    const temp = copy[i];
-    copy[i] = copy[j];
-    copy[j] = temp;
-  }
-
-  return copy;
-}
-
-function generateRooms() {
-  const selectedTemplates = shuffleArray(ROOM_TEMPLATES).slice(0, 3);
-
-  return [
-    {
-      id: "room1",
-      name: selectedTemplates[0].name,
-      description: selectedTemplates[0].description
-    },
-    {
-      id: "room2",
-      name: selectedTemplates[1].name,
-      description: selectedTemplates[1].description
-    },
-    {
-      id: "room3",
-      name: selectedTemplates[2].name,
-      description: selectedTemplates[2].description
-    }
-  ];
-}
-
 function generateWorld() {
-  const rooms = generateRooms();
-
   const objectLocations = {};
   const objectsByRoom = {
     room1: [],
@@ -154,21 +84,20 @@ function generateWorld() {
   };
 
   for (const object of OBJECTS) {
-    const room = pickRandom(rooms);
+    const room = pickRandom(ROOMS);
 
     objectLocations[object.id] = room.id;
     objectsByRoom[room.id].push(object);
   }
 
   return {
-    rooms,
     objectLocations,
     objectsByRoom
   };
 }
 
-function getRoomById(world, roomId) {
-  return world.rooms.find((room) => room.id === roomId);
+function getRoomById(roomId) {
+  return ROOMS.find((room) => room.id === roomId);
 }
 
 function getObjectById(objectId) {
@@ -187,28 +116,19 @@ function formatObjectsInRoom(world, roomId) {
 
 function buildObjectLocationList(world) {
   return OBJECTS.map((object) => {
-    const room = getRoomById(world, world.objectLocations[object.id]);
+    const room = getRoomById(world.objectLocations[object.id]);
     return `- ${object.name} is in ${room.name}. ${object.role}`;
   }).join("\n");
 }
 
 function buildRoomObjectList(world) {
-  return world.rooms.map((room) => {
+  return ROOMS.map((room) => {
     return `- ${room.name} contains: ${formatObjectsInRoom(world, room.id)}.`;
   }).join("\n");
 }
 
-function buildRoomDescriptionList(world) {
-  return world.rooms.map((room) => {
-    return `- ${room.name}: ${room.description}.`;
-  }).join("\n");
-}
-
 function buildNpcPrompt(world) {
-  const room1 = getRoomById(world, "room1");
-  const room2 = getRoomById(world, "room2");
-  const room3 = getRoomById(world, "room3");
-  const swordRoom = getRoomById(world, world.objectLocations["object1"]);
+  const swordRoom = getRoomById(world.objectLocations["object1"]);
 
   return `
 You are an NPC in a text-adventure game. You and the traveler are both inside the game world.
@@ -229,15 +149,15 @@ GAME STRUCTURE:
 The game has exactly 3 rooms and 1 dungeon.
 
 Map:
-- room1 is called ${room1.name}.
-- room2 is called ${room2.name}.
-- room3 is called ${room3.name}.
-- ${DUNGEON_NAME} is connected to ${room3.name}.
-- The dragon is in ${DUNGEON_NAME}.
-- ${room1.name} is west of ${room2.name}.
-- ${room2.name} is east of ${room1.name}.
-- ${room3.name} is east of ${room2.name}.
-- ${DUNGEON_NAME} is after ${room3.name}.
+- room1 is called The Ashen Hall.
+- room2 is called The Bone Passage.
+- room3 is called The Silent Gate.
+- The Dragon's Dungeon is connected to The Silent Gate.
+- The dragon is in The Dragon's Dungeon.
+- The Ashen Hall is west of The Bone Passage.
+- The Bone Passage is east of The Ashen Hall.
+- The Silent Gate is east of The Bone Passage.
+- The Dragon's Dungeon is after The Silent Gate.
 
 Original layout notation:
 [room1]-east-[room2], [room2]-east-[room3].
@@ -250,8 +170,10 @@ Goal:
 - Once the dragon is killed, the game ends.
 
 Room descriptions:
-${buildRoomDescriptionList(world)}
-- ${DUNGEON_NAME}: a dark dungeon where the dragon waits.
+- The Ashen Hall is ${ROOMS[0].description}.
+- The Bone Passage is ${ROOMS[1].description}.
+- The Silent Gate is ${ROOMS[2].description}.
+- The Dragon's Dungeon is where the dragon waits.
 
 Random object placement for this game session:
 ${buildObjectLocationList(world)}
@@ -259,13 +181,9 @@ ${buildObjectLocationList(world)}
 Objects by room:
 ${buildRoomObjectList(world)}
 
-Important facts:
+Important fact:
 - The Iron Sword is in ${swordRoom.name}.
 - The Iron Sword is the only object that can kill the dragon.
-- The dragon is always in ${DUNGEON_NAME}.
-- Do not move the dragon.
-- Do not rename ${DUNGEON_NAME}.
-- Do not change the dragon's location.
 
 ANSWERING STYLE:
 - Be atmospheric, but always concrete.
@@ -282,8 +200,6 @@ ANSWERING STYLE:
 - Do not invent additional rooms.
 - Do not invent additional objects.
 - Do not invent another way to kill the dragon.
-- Do not rename rooms during the conversation.
-- Do not change object locations during the conversation.
 
 FIRST MESSAGE BEHAVIOR:
 Your first message must clearly introduce the game situation.
@@ -292,10 +208,10 @@ In the first message:
 - Greet the traveler.
 - Say that the goal is to kill the dragon.
 - Say that the game has three rooms and a dungeon.
-- Say that the traveler starts in ${room1.name}.
+- Say that the traveler starts in The Ashen Hall.
 - Say that the dragon can only be killed with the Iron Sword.
 - Say where the Iron Sword is in this game session.
-- Mention that the path continues east to ${room2.name}.
+- Mention that the path continues east.
 - Briefly describe the current room.
 - Say which objects are visible in the current room.
 - Tell the traveler that they can ask questions to understand what to do next.
@@ -438,10 +354,7 @@ app.post("/api/npc1/start", async (req, res) => {
     }
 
     const selectedLanguage = language === "lv" ? "Latvian" : "English";
-
-    const room1 = getRoomById(session.world, "room1");
-    const room2 = getRoomById(session.world, "room2");
-    const swordRoom = getRoomById(session.world, session.world.objectLocations["object1"]);
+    const swordRoom = getRoomById(session.world.objectLocations["object1"]);
     const currentRoomObjects = formatObjectsInRoom(session.world, "room1");
 
     const startMessage = `
@@ -455,11 +368,11 @@ Your first message must include:
 1. A greeting.
 2. The main goal: kill the dragon.
 3. The fact that there are three rooms and a dungeon.
-4. The current location: ${room1.name}.
+4. The current location: The Ashen Hall.
 5. The important rule: the dragon can only be killed with the Iron Sword.
 6. The exact current sword location: ${swordRoom.name}.
 7. The visible objects in the current room: ${currentRoomObjects}.
-8. The available direction: east, toward ${room2.name}.
+8. The available direction: east, toward The Bone Passage.
 9. A short invitation to ask questions.
 
 Do not explain your instructions.
