@@ -46,15 +46,19 @@ public class UIManager : MonoBehaviour
     public Button returnButton;
     public TextMeshProUGUI returnButtonText;
 
-    [Header("NPC Game Placeholder UI")]
+    [Header("NPC Game UI")]
     public TextMeshProUGUI npcTitleText;
     public TextMeshProUGUI npcPlaceholderText;
+
+    public GameObject npcChatObject;
+
     public Button exitNpcButton;
     public TextMeshProUGUI exitNpcButtonText;
 
+    public TextMeshProUGUI sendButtonText;
+
     private int currentNpcId = 0;
 
-    // Здесь позже можно будет хранить прогресс каждого NPC отдельно.
     private Dictionary<int, int> npcProgress = new Dictionary<int, int>();
 
     private void Start()
@@ -136,10 +140,14 @@ public class UIManager : MonoBehaviour
         npcButton3LabelText.text = GetNpcDisplayName(3);
 
         returnButtonText.text = isLatvian ? "Atpakaļ" : "Return";
-
         exitNpcButtonText.text = isLatvian ? "Iziet" : "Exit";
 
-        UpdateNpcPlaceholderText();
+        if (sendButtonText != null)
+        {
+            sendButtonText.text = isLatvian ? "Sūtīt" : "Send";
+        }
+
+        UpdateNpcScreen();
     }
 
     private void ShowMainMenu()
@@ -169,19 +177,17 @@ public class UIManager : MonoBehaviour
         npcSelectPanel.SetActive(false);
         npcGamePanel.SetActive(true);
 
-        UpdateNpcPlaceholderText();
+        UpdateNpcScreen();
     }
 
-    private void UpdateNpcPlaceholderText()
+    private void UpdateNpcScreen()
     {
-        if (npcTitleText == null || npcPlaceholderText == null)
+        if (npcTitleText == null)
         {
             return;
         }
 
         bool isLatvian = currentLanguage == GameLanguage.Latvian;
-
-        string npcDisplayName = GetNpcDisplayName(currentNpcId);
 
         if (currentNpcId == 0)
         {
@@ -189,20 +195,54 @@ public class UIManager : MonoBehaviour
                 ? "Nespēlējamais personāžs"
                 : "NPC";
 
-            npcPlaceholderText.text = isLatvian
-                ? "Šeit vēlāk būs dialogs ar izvēlēto nespēlējamo personāžu."
-                : "The selected NPC dialogue will be added here later.";
+            if (npcPlaceholderText != null)
+            {
+                npcPlaceholderText.gameObject.SetActive(true);
+                npcPlaceholderText.text = isLatvian
+                    ? "Šeit vēlāk būs dialogs ar izvēlēto nespēlējamo personāžu."
+                    : "The selected NPC dialogue will be added here later.";
+            }
+
+            if (npcChatObject != null)
+            {
+                npcChatObject.SetActive(false);
+            }
 
             return;
         }
 
-        int progress = npcProgress.ContainsKey(currentNpcId) ? npcProgress[currentNpcId] : 0;
+        npcTitleText.text = GetNpcDisplayName(currentNpcId);
 
-        npcTitleText.text = npcDisplayName;
+        if (currentNpcId == 1)
+        {
+            if (npcPlaceholderText != null)
+            {
+                npcPlaceholderText.gameObject.SetActive(false);
+            }
 
-        npcPlaceholderText.text = isLatvian
-            ? $"Šeit vēlāk būs dialogs ar šo tēlu.\n\nPašreizējais progress: {progress}"
-            : $"The dialogue with this character will be added here later.\n\nCurrent progress: {progress}";
+            if (npcChatObject != null)
+            {
+                npcChatObject.SetActive(true);
+            }
+        }
+        else
+        {
+            if (npcChatObject != null)
+            {
+                npcChatObject.SetActive(false);
+            }
+
+            if (npcPlaceholderText != null)
+            {
+                int progress = npcProgress.ContainsKey(currentNpcId) ? npcProgress[currentNpcId] : 0;
+
+                npcPlaceholderText.gameObject.SetActive(true);
+
+                npcPlaceholderText.text = isLatvian
+                    ? $"Šeit vēlāk būs dialogs ar šo tēlu.\n\nPašreizējais progress: {progress}"
+                    : $"The dialogue with this character will be added here later.\n\nCurrent progress: {progress}";
+            }
+        }
     }
 
     private string GetNpcDisplayName(int npcId)

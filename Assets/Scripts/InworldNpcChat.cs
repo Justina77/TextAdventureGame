@@ -1,0 +1,132 @@
+using System;
+using System.Collections;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+
+public class InworldNpcChat : MonoBehaviour
+{
+    [Header("Backend")]
+    public string apiUrl = "http://localhost:3000/api/npc1";
+
+    [Header("UI")]
+    public TextMeshProUGUI chatLogText;
+    public TMP_InputField questionInputField;
+    public Button sendButton;
+
+    private string sessionId;
+    private bool isWaitingForResponse = false;
+
+    [Serializable]
+    private class NpcRequest
+    {
+        public string sessionId;
+        public string message;
+    }
+
+    [Serializable]
+    private class NpcResponse
+    {
+        public string reply;
+        public string error;
+    }
+
+    private void Awake()
+    {
+        sessionId = Guid.NewGuid().ToString();
+
+        if (sendButton != null)
+        {
+            sendButton.onClick.AddListener(SendQuestion);
+        }
+    }
+
+    public void SendQuestion()
+    {
+        if (isWaitingForResponse)
+        {
+            return;
+        }
+
+        if (questionInputField == null)
+        {
+            return;
+        }
+
+        string question = questionInputField.text.Trim();
+
+        if (string.IsNullOrEmpty(question))
+        {
+            return;
+        }
+
+        questionInputField.text = "";
+
+        AddToChat("Traveler", question);
+
+        StartCoroutine(SendQuestionCoroutine(question));
+    }
+
+    private IEnumerator SendQuestionCoroutine(string question)
+    {
+        isWaitingForResponse = true;
+
+        if (sendButton != null)
+        {
+            sendButton.interactable = false;
+        }
+
+        NpcRequest requestData = new NpcRequest
+        {
+            sessionId = sessionId,
+            message = question
+        };
+
+        string json = JsonUtility.ToJson(requestData);
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+
+        UnityWebRequest request = new UnityWebRequest(apiUrl, "POST");
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            AddToChat("System", "Connection error: " + request.error);
+        }
+        else
+        {
+            NpcResponse response = JsonUtility.FromJson<NpcResponse>(request.downloadHandler.text);
+
+            if (!string.IsNullOrEmpty(response.error))
+            {
+                AddToChat("System", "Server error: " + response.error);
+            }
+            else
+            {
+                AddToChat("NPC", response.reply);
+            }
+        }
+
+        if (sendButton != null)
+        {
+            sendButton.interactable = true;
+        }
+
+        isWaitingForResponse = false;
+    }
+
+    private void AddToChat(string speaker, string message)
+    {
+        if (chatLogText == null)
+        {
+            return;
+        }
+
+        chatLogText.text += $"\n\n<b>{speaker}:</b> {message}";
+    }
+}
