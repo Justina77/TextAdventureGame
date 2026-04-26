@@ -122,14 +122,10 @@ public class UIManager : MonoBehaviour
 
         descriptionText.text = isLatvian
             ? "Tu esi ceļotājs teksta piedzīvojumu spēlē. Tu un nespēlējamais personāžs (NPC) atrodaties spēles pasaulē. Tavs mērķis ir nogalināt pūķi.\n\n" +
-              "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem, ievērojot šādus noteikumus:\n\n" +
-              "1. Uzdod līdzīgus un papildjautājumus tiem iepriekšējiem jautājumiem, uz kuriem atbilde bija \"jā\".\n" +
-              "2. Izvairies uzdot līdzīgus un papildjautājumus tiem iepriekšējiem jautājumiem, uz kuriem atbilde bija \"nē\".\n\n" +
+              "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem.\n\n" +
               "Zemāk ir pieejami trīs dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā."
             : "You are a traveler in a text adventure game. You and the NPC are both in the game. Your goal is to kill the dragon.\n\n" +
-              "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions according to the following rules:\n\n" +
-              "1. Ask similar and follow-up questions to previous questions that have a \"yes\" answer.\n" +
-              "2. Avoid asking similar and follow-up questions to previous questions that have a \"no\" answer.\n\n" +
+              "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions.\n\n" +
               "Below are three different NPCs. You can choose any of them in any order.";
 
         npcButton1Text.text = "1";

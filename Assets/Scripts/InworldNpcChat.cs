@@ -11,11 +11,15 @@ public class InworldNpcChat : MonoBehaviour
     [Header("Backend")]
     public string apiUrl = "http://localhost:3000/api/npc1";
     public string startApiUrl = "http://localhost:3000/api/npc1/start";
+    public string backendBaseUrl = "http://localhost:3000";
 
     [Header("UI")]
     public TextMeshProUGUI chatLogText;
     public TMP_InputField questionInputField;
     public Button sendButton;
+
+    [Header("Audio")]
+    public AudioSource npcAudioSource;
 
     [Header("Scroll")]
     public ScrollRect chatScrollRect;
@@ -47,6 +51,7 @@ public class InworldNpcChat : MonoBehaviour
         public string reply;
         public string error;
         public bool gameEnded;
+        public string audioUrl;
     }
 
     private void Awake()
@@ -62,6 +67,29 @@ public class InworldNpcChat : MonoBehaviour
         {
             sendButton.onClick.AddListener(SendQuestion);
         }
+
+        if (questionInputField != null)
+        {
+            questionInputField.onSubmit.AddListener(OnInputSubmit);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (sendButton != null)
+        {
+            sendButton.onClick.RemoveListener(SendQuestion);
+        }
+
+        if (questionInputField != null)
+        {
+            questionInputField.onSubmit.RemoveListener(OnInputSubmit);
+        }
+    }
+
+    private void OnInputSubmit(string text)
+    {
+        SendQuestion();
     }
 
     public void SetLanguage(bool latvian)
@@ -77,6 +105,7 @@ public class InworldNpcChat : MonoBehaviour
         }
 
         hasStarted = true;
+        gameEnded = false;
 
         if (chatLogText != null)
         {
@@ -141,18 +170,30 @@ public class InworldNpcChat : MonoBehaviour
         {
             NpcResponse response = JsonUtility.FromJson<NpcResponse>(request.downloadHandler.text);
 
-            if (!string.IsNullOrEmpty(response.error))
+            if (response == null)
+            {
+                AddToChat("System", "Server returned an empty response.");
+            }
+            else if (!string.IsNullOrEmpty(response.error))
             {
                 AddToChat("System", "Server error: " + response.error);
             }
-            else if (!string.IsNullOrEmpty(response.reply))
+            else
             {
-                AddToChat("NPC", response.reply);
-            }
+                if (!string.IsNullOrEmpty(response.reply))
+                {
+                    AddToChat("NPC", response.reply);
+                }
 
-            if (response.gameEnded)
-            {
-                EndGame();
+                if (!string.IsNullOrEmpty(response.audioUrl))
+                {
+                    StartCoroutine(PlayNpcAudio(response.audioUrl));
+                }
+
+                if (response.gameEnded)
+                {
+                    EndGame();
+                }
             }
         }
 
@@ -193,18 +234,30 @@ public class InworldNpcChat : MonoBehaviour
         {
             NpcResponse response = JsonUtility.FromJson<NpcResponse>(request.downloadHandler.text);
 
-            if (!string.IsNullOrEmpty(response.error))
+            if (response == null)
+            {
+                AddToChat("System", "Server returned an empty response.");
+            }
+            else if (!string.IsNullOrEmpty(response.error))
             {
                 AddToChat("System", "Server error: " + response.error);
             }
             else
             {
-                AddToChat("NPC", response.reply);
-            }
+                if (!string.IsNullOrEmpty(response.reply))
+                {
+                    AddToChat("NPC", response.reply);
+                }
 
-            if (response.gameEnded)
-            {
-                EndGame();
+                if (!string.IsNullOrEmpty(response.audioUrl))
+                {
+                    StartCoroutine(PlayNpcAudio(response.audioUrl));
+                }
+
+                if (response.gameEnded)
+                {
+                    EndGame();
+                }
             }
         }
 
@@ -214,6 +267,49 @@ public class InworldNpcChat : MonoBehaviour
         {
             SetInputEnabled(true);
         }
+    }
+
+    private IEnumerator PlayNpcAudio(string audioUrl)
+    {
+        if (string.IsNullOrEmpty(audioUrl))
+        {
+            yield break;
+        }
+
+        if (npcAudioSource == null)
+        {
+            AddToChat("System", "Audio Source is not assigned.");
+            yield break;
+        }
+
+        string fullAudioUrl = audioUrl;
+
+        if (audioUrl.StartsWith("/"))
+        {
+            fullAudioUrl = backendBaseUrl + audioUrl;
+        }
+
+        UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(fullAudioUrl, AudioType.MPEG);
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            AddToChat("System", "Audio error: " + request.error);
+            yield break;
+        }
+
+        AudioClip clip = DownloadHandlerAudioClip.GetContent(request);
+
+        if (clip == null)
+        {
+            AddToChat("System", "Audio clip could not be loaded.");
+            yield break;
+        }
+
+        npcAudioSource.Stop();
+        npcAudioSource.clip = clip;
+        npcAudioSource.Play();
     }
 
     private void AddToChat(string speaker, string message)
@@ -238,7 +334,7 @@ public class InworldNpcChat : MonoBehaviour
 
         chatLogText.ForceMeshUpdate();
 
-        float preferredHeight = chatLogText.preferredHeight + 60f;
+        float preferredHeight = chatLogText.preferredHeight + 120f;
         float minHeight = 400f;
 
         chatContent.SetSizeWithCurrentAnchors(
@@ -277,6 +373,11 @@ public class InworldNpcChat : MonoBehaviour
         if (questionInputField != null)
         {
             questionInputField.interactable = enabled;
+
+            if (enabled)
+            {
+                questionInputField.ActivateInputField();
+            }
         }
 
         if (sendButton != null)
