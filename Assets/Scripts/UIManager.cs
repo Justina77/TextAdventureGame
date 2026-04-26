@@ -50,13 +50,19 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI npcTitleText;
     public TextMeshProUGUI npcPlaceholderText;
 
+    [Header("NPC 1 - AI NPC")]
     public GameObject npcChatObject;
+    public InworldNpcChat npc1Chat;
 
+    [Header("NPC 2 - Scripted NPC")]
+    public GameObject scriptedNpcObject;
+    public ScriptedNpcDialogue npc2ScriptedDialogue;
+
+    [Header("NPC Game Buttons")]
     public Button exitNpcButton;
     public TextMeshProUGUI exitNpcButtonText;
 
     public TextMeshProUGUI sendButtonText;
-    public InworldNpcChat npc1Chat;
 
     private int currentNpcId = 0;
 
@@ -71,36 +77,60 @@ public class UIManager : MonoBehaviour
 
     private void SetupButtons()
     {
-        startButton.onClick.AddListener(ShowNpcSelect);
-
-        latvianButton.onClick.AddListener(() =>
+        if (startButton != null)
         {
-            SetLanguage(GameLanguage.Latvian);
-        });
+            startButton.onClick.AddListener(ShowNpcSelect);
+        }
 
-        englishButton.onClick.AddListener(() =>
+        if (latvianButton != null)
         {
-            SetLanguage(GameLanguage.English);
-        });
+            latvianButton.onClick.AddListener(() =>
+            {
+                SetLanguage(GameLanguage.Latvian);
+            });
+        }
 
-        returnButton.onClick.AddListener(ShowMainMenu);
-
-        npcButton1.onClick.AddListener(() =>
+        if (englishButton != null)
         {
-            OpenNpcGame(1);
-        });
+            englishButton.onClick.AddListener(() =>
+            {
+                SetLanguage(GameLanguage.English);
+            });
+        }
 
-        npcButton2.onClick.AddListener(() =>
+        if (returnButton != null)
         {
-            OpenNpcGame(2);
-        });
+            returnButton.onClick.AddListener(ShowMainMenu);
+        }
 
-        npcButton3.onClick.AddListener(() =>
+        if (npcButton1 != null)
         {
-            OpenNpcGame(3);
-        });
+            npcButton1.onClick.AddListener(() =>
+            {
+                OpenNpcGame(1);
+            });
+        }
 
-        exitNpcButton.onClick.AddListener(ShowNpcSelect);
+        if (npcButton2 != null)
+        {
+            npcButton2.onClick.AddListener(() =>
+            {
+                OpenNpcGame(2);
+            });
+        }
+
+        if (npcButton3 != null)
+        {
+            npcButton3.onClick.AddListener(() =>
+            {
+                OpenNpcGame(3);
+            });
+        }
+
+        if (exitNpcButton != null)
+        {
+            exitNpcButton.onClick.AddListener(ShowNpcSelect);
+        }
     }
 
     private void SetLanguage(GameLanguage language)
@@ -113,31 +143,76 @@ public class UIManager : MonoBehaviour
     {
         bool isLatvian = currentLanguage == GameLanguage.Latvian;
 
-        titleText.text = "Text adventure game";
+        if (titleText != null)
+        {
+            titleText.text = "Text adventure game";
+        }
 
-        startButtonText.text = isLatvian ? "Sākt" : "Start";
+        if (startButtonText != null)
+        {
+            startButtonText.text = isLatvian ? "Sākt" : "Start";
+        }
 
-        latvianButtonText.text = "Latviešu";
-        englishButtonText.text = "English";
+        if (latvianButtonText != null)
+        {
+            latvianButtonText.text = "Latviešu";
+        }
 
-        descriptionText.text = isLatvian
-            ? "Tu esi ceļotājs teksta piedzīvojumu spēlē. Tu un nespēlējamais personāžs (NPC) atrodaties spēles pasaulē. Tavs mērķis ir nogalināt pūķi.\n\n" +
-              "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem.\n\n" +
-              "Zemāk ir pieejami trīs dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā."
-            : "You are a traveler in a text adventure game. You and the NPC are both in the game. Your goal is to kill the dragon.\n\n" +
-              "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions.\n\n" +
-              "Below are three different NPCs. You can choose any of them in any order.";
+        if (englishButtonText != null)
+        {
+            englishButtonText.text = "English";
+        }
 
-        npcButton1Text.text = "1";
-        npcButton2Text.text = "2";
-        npcButton3Text.text = "3";
+        if (descriptionText != null)
+        {
+            descriptionText.text = isLatvian
+                ? "Tu esi ceļotājs teksta piedzīvojumu spēlē. Tu un nespēlējamais personāžs (NPC) atrodaties spēles pasaulē. Tavs mērķis ir nogalināt pūķi.\n\n" +
+                  "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem.\n\n" +
+                  "Zemāk ir pieejami trīs dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā."
+                : "You are a traveler in a text adventure game. You and the NPC are both in the game. Your goal is to kill the dragon.\n\n" +
+                  "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions.\n\n" +
+                  "Below are three different NPCs. You can choose any of them in any order.";
+        }
 
-        npcButton1LabelText.text = GetNpcDisplayName(1);
-        npcButton2LabelText.text = GetNpcDisplayName(2);
-        npcButton3LabelText.text = GetNpcDisplayName(3);
+        if (npcButton1Text != null)
+        {
+            npcButton1Text.text = "1";
+        }
 
-        returnButtonText.text = isLatvian ? "Atpakaļ" : "Return";
-        exitNpcButtonText.text = isLatvian ? "Iziet" : "Exit";
+        if (npcButton2Text != null)
+        {
+            npcButton2Text.text = "2";
+        }
+
+        if (npcButton3Text != null)
+        {
+            npcButton3Text.text = "3";
+        }
+
+        if (npcButton1LabelText != null)
+        {
+            npcButton1LabelText.text = GetNpcDisplayName(1);
+        }
+
+        if (npcButton2LabelText != null)
+        {
+            npcButton2LabelText.text = GetNpcDisplayName(2);
+        }
+
+        if (npcButton3LabelText != null)
+        {
+            npcButton3LabelText.text = GetNpcDisplayName(3);
+        }
+
+        if (returnButtonText != null)
+        {
+            returnButtonText.text = isLatvian ? "Atpakaļ" : "Return";
+        }
+
+        if (exitNpcButtonText != null)
+        {
+            exitNpcButtonText.text = isLatvian ? "Iziet" : "Exit";
+        }
 
         if (sendButtonText != null)
         {
@@ -149,21 +224,50 @@ public class UIManager : MonoBehaviour
             npc1Chat.SetLanguage(isLatvian);
         }
 
+        if (npc2ScriptedDialogue != null)
+        {
+            npc2ScriptedDialogue.SetLanguage(isLatvian);
+        }
+
         UpdateNpcScreen();
     }
 
     private void ShowMainMenu()
     {
-        mainMenuPanel.SetActive(true);
-        npcSelectPanel.SetActive(false);
-        npcGamePanel.SetActive(false);
+        currentNpcId = 0;
+
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+        }
+
+        if (npcSelectPanel != null)
+        {
+            npcSelectPanel.SetActive(false);
+        }
+
+        if (npcGamePanel != null)
+        {
+            npcGamePanel.SetActive(false);
+        }
     }
 
     private void ShowNpcSelect()
     {
-        mainMenuPanel.SetActive(false);
-        npcSelectPanel.SetActive(true);
-        npcGamePanel.SetActive(false);
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(false);
+        }
+
+        if (npcSelectPanel != null)
+        {
+            npcSelectPanel.SetActive(true);
+        }
+
+        if (npcGamePanel != null)
+        {
+            npcGamePanel.SetActive(false);
+        }
     }
 
     private void OpenNpcGame(int npcId)
@@ -175,21 +279,32 @@ public class UIManager : MonoBehaviour
             npcProgress.Add(npcId, 0);
         }
 
-        mainMenuPanel.SetActive(false);
-        npcSelectPanel.SetActive(false);
-        npcGamePanel.SetActive(true);
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(false);
+        }
+
+        if (npcSelectPanel != null)
+        {
+            npcSelectPanel.SetActive(false);
+        }
+
+        if (npcGamePanel != null)
+        {
+            npcGamePanel.SetActive(true);
+        }
 
         UpdateNpcScreen();
     }
 
     private void UpdateNpcScreen()
     {
+        bool isLatvian = currentLanguage == GameLanguage.Latvian;
+
         if (npcTitleText == null)
         {
             return;
         }
-
-        bool isLatvian = currentLanguage == GameLanguage.Latvian;
 
         if (currentNpcId == 0)
         {
@@ -210,6 +325,11 @@ public class UIManager : MonoBehaviour
                 npcChatObject.SetActive(false);
             }
 
+            if (scriptedNpcObject != null)
+            {
+                scriptedNpcObject.SetActive(false);
+            }
+
             return;
         }
 
@@ -227,10 +347,38 @@ public class UIManager : MonoBehaviour
                 npcChatObject.SetActive(true);
             }
 
+            if (scriptedNpcObject != null)
+            {
+                scriptedNpcObject.SetActive(false);
+            }
+
             if (npc1Chat != null)
             {
                 npc1Chat.SetLanguage(isLatvian);
                 npc1Chat.BeginConversationIfNeeded();
+            }
+        }
+        else if (currentNpcId == 2)
+        {
+            if (npcPlaceholderText != null)
+            {
+                npcPlaceholderText.gameObject.SetActive(false);
+            }
+
+            if (npcChatObject != null)
+            {
+                npcChatObject.SetActive(false);
+            }
+
+            if (scriptedNpcObject != null)
+            {
+                scriptedNpcObject.SetActive(true);
+            }
+
+            if (npc2ScriptedDialogue != null)
+            {
+                npc2ScriptedDialogue.SetLanguage(isLatvian);
+                npc2ScriptedDialogue.BeginConversationIfNeeded();
             }
         }
         else
@@ -238,6 +386,11 @@ public class UIManager : MonoBehaviour
             if (npcChatObject != null)
             {
                 npcChatObject.SetActive(false);
+            }
+
+            if (scriptedNpcObject != null)
+            {
+                scriptedNpcObject.SetActive(false);
             }
 
             if (npcPlaceholderText != null)
