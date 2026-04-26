@@ -56,6 +56,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI exitNpcButtonText;
 
     public TextMeshProUGUI sendButtonText;
+    public InworldNpcChat npc1Chat;
 
     private int currentNpcId = 0;
 
@@ -147,6 +148,11 @@ public class UIManager : MonoBehaviour
             sendButtonText.text = isLatvian ? "Sūtīt" : "Send";
         }
 
+        if (npc1Chat != null)
+        {
+            npc1Chat.SetLanguage(isLatvian);
+        }
+
         UpdateNpcScreen();
     }
 
@@ -223,6 +229,12 @@ public class UIManager : MonoBehaviour
             if (npcChatObject != null)
             {
                 npcChatObject.SetActive(true);
+            }
+
+            if (npc1Chat != null)
+            {
+                npc1Chat.SetLanguage(isLatvian);
+                npc1Chat.BeginConversationIfNeeded();
             }
         }
         else
