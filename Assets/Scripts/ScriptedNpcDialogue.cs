@@ -56,7 +56,7 @@ public class ScriptedNpcDialogue : MonoBehaviour
 
     private bool dragonAwake = false;
 
-    private void Start()
+    private void Awake()
     {
         HideAllChoices();
     }
