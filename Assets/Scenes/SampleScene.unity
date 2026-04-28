@@ -599,9 +599,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d91065089e22f408e3955d33abed43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InworldNpcChat
-  apiUrl: http://localhost:3000/api/npc1
-  startApiUrl: http://localhost:3000/api/npc1/start
-  backendBaseUrl: http://localhost:3000
+  apiUrl: https://text-adventure-backend-2cjs.onrender.com/api/npc1
+  startApiUrl: https://text-adventure-backend-2cjs.onrender.com/api/npc1/start
+  backendBaseUrl: https://text-adventure-backend-2cjs.onrender.com
   chatLogText: {fileID: 1278450472}
   questionInputField: {fileID: 1125423284}
   sendButton: {fileID: 1247471082}
