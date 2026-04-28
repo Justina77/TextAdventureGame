@@ -154,10 +154,12 @@ public class UIManager : MonoBehaviour
             descriptionText.text = isLatvian
                 ? "Tu esi ceļotājs teksta piedzīvojumu spēlē. Tu un nespēlējamais personāžs (NPC) atrodaties spēles pasaulē. Tavs mērķis ir nogalināt pūķi.\n\n" +
                   "Katrā solī tev jāuzdod jautājumi nespēlējamajam personāžam, lai iegūtu informāciju par to, kā nogalināt pūķi. Uzdod jaunus jautājumus, balstoties uz pašreizējo novērojumu un atbildēm uz iepriekšējiem jautājumiem.\n\n" +
-                  "Zemāk ir pieejami divi dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā."
+                  "Zemāk ir pieejami divi dažādi nespēlējamie personāži. Tu vari izvēlēties jebkuru no tiem jebkurā secībā.\n\n" +
+                  "Nav ieteicams mainīt spēles valodu spēles laikā."
                 : "You are a traveler in a text adventure game. You and the NPC are both in the game. Your goal is to kill the dragon.\n\n" +
                   "For each step, you should ask questions to the NPC in order to get information on how to kill the dragon. Ask a new set of questions based on the current observation and answers given to the previous set of questions.\n\n" +
-                  "Below are two different NPCs. You can choose either of them in any order.";
+                  "Below are two different NPCs. You can choose either of them in any order.\n\n" +
+                  "It is not recommended to change the game language during playthrough.";
         }
 
         if (npcButton1Text != null)
